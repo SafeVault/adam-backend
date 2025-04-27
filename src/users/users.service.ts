@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { User, UserRole } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import { CreateEmployeeDto } from './users.dto';
 
 @Injectable()
 export class UsersService {
@@ -40,5 +41,13 @@ export class UsersService {
       return result;
     }
     return null;
+  }
+
+  async createEmployee(dto: CreateEmployeeDto): Promise<User> {
+    const employee = this.usersRepository.create({
+      ...dto,
+      role: UserRole.EMPLOYEE,
+    });
+    return this.usersRepository.save(employee);
   }
 }
