@@ -1,5 +1,9 @@
-import 'reflect-metadata';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  EMPLOYEE = 'employee',
+}
 
 @Entity('users')
 export class User {
@@ -12,9 +16,12 @@ export class User {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  walletAddress?: string;
+
   @Column()
   password: string;
 
-  @Column({ nullable: true })
-  walletAddress?: string;
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYEE })
+  role: 'admin' | 'employee';
 }
