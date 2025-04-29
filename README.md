@@ -40,8 +40,57 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
+# test server with sample data (in-memory SQLite)
+$ npm run start:test
+
 # production mode
 $ npm run start:prod
+```
+
+## API Endpoints
+
+### Transactions
+
+```
+GET /transactions - Get list of transactions with pagination and filtering
+```
+
+Query parameters:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 10)
+- `userId` - Filter by user ID (admin only, employees can only see their own transactions)
+- `type` - Filter by transaction type (Deposit, Withdraw)
+- `status` - Filter by status (Successful, Failed, Pending)
+- `network` - Filter by network
+- `currency` - Filter by currency
+- `department` - Filter by department
+
+Response format:
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "type": "Deposit",
+      "createdAt": "2023-06-01T12:00:00Z",
+      "amount": 2458.66,
+      "from": "0x4f...3a4c0",
+      "to": "0x8f...7a81b",
+      "department": "Marketing",
+      "status": "Successful",
+      "network": "Ethereum",
+      "currency": "ETH",
+      "userId": "user-uuid"
+    }
+  ],
+  "meta": {
+    "totalItems": 100,
+    "itemCount": 10,
+    "itemsPerPage": 10,
+    "totalPages": 10,
+    "currentPage": 1
+  }
+}
 ```
 
 ## Run tests
