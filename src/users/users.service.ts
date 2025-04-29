@@ -46,6 +46,7 @@ export class UsersService {
   async createEmployee(dto: CreateEmployeeDto): Promise<User> {
     const employee = this.usersRepository.create({
       ...dto,
+      password: await bcrypt.hash('adam', 10),
       role: UserRole.EMPLOYEE,
     });
     return this.usersRepository.save(employee);
