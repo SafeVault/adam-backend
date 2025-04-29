@@ -15,10 +15,6 @@ export class PayrollsService {
   ) {}
 
   async createPayroll(dto: CreatePayrollDto): Promise<Payroll> {
-    // TODO: Validate employee IDs when the employee functionality is merged
-    // For now, we'll just use the IDs that are passed to us
-
-    // Create and save the payroll entity
     const payroll = this.payrollRepository.create({
       paymentDate: dto.paymentDate,
       status: PayrollStatus.PENDING,

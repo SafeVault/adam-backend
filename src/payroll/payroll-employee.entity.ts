@@ -14,6 +14,10 @@ export class PayrollEmployeeDetail {
   @Column()
   payroll_id: number;
 
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'employee_id' })
+  employee: User;
+
   @Column()
   employee_id: number;
 

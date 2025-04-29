@@ -19,13 +19,6 @@ export class Payroll {
   @Column({ type: 'enum', enum: PayrollStatus, default: PayrollStatus.PENDING })
   status: PayrollStatus;
 
-  @ManyToMany(() => User)
-  @JoinTable({
-    name: 'payroll_employees',
-    joinColumn: { name: 'payroll_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'employee_id', referencedColumnName: 'id' },
-  })
-  employees: User[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -51,11 +51,9 @@ export class PayrollProcessor {
             this.logger.log(`Processing payment of ${detail.amount} for employee ${detail.employee_id}`);
             
             // Simulate payment processing
-            // In a real implementation, you would call your payment provider
             await new Promise(resolve => setTimeout(resolve, 1000));
           } catch (error) {
             this.logger.error(`Failed to process payment for employee ${detail.employee_id}:`, error);
-            // Continue processing other employees even if one fails
           }
         }
         
