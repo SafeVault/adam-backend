@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../users/user.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { PayrollEmployeeDetail } from './payroll-employee.entity';
 
 export enum PayrollStatus {
   PENDING = 'pending',
@@ -19,6 +26,8 @@ export class Payroll {
   @Column({ type: 'enum', enum: PayrollStatus, default: PayrollStatus.PENDING })
   status: PayrollStatus;
 
+  @OneToMany(() => PayrollEmployeeDetail, (detail) => detail.payroll, { cascade: true })
+  details: PayrollEmployeeDetail[];
 
   @CreateDateColumn()
   createdAt: Date;
