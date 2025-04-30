@@ -1,9 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserRole } from './user.entity';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { CreateEmployeeDto } from './users.dto';
+import { isValidStarknetAddress } from '../validation/wallet-validator';
 
 @Injectable()
 export class UsersService {
@@ -16,16 +21,20 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<Omit<User, 'password'> | null> {
     if (!email || !password) {
       return null;
     }
-    
+
     if (email.length > 320) {
       return null;
     }
 
-    const emailRegex = /^(([^<>()\[\]\.,;:\s@"]+(\.[^<>()\[\]\.,;:\s@"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegex =
+      /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const rExp: RegExp = new RegExp(emailRegex);
 
     if (!rExp.test(email)) {
@@ -50,5 +59,34 @@ export class UsersService {
       role: UserRole.EMPLOYEE,
     });
     return this.usersRepository.save(employee);
+  }
+
+  async connectWallet(userId: string, walletAddress: string): Promise<User> {
+    const normalizedAddress = walletAddress.startsWith('0x')
+      ? walletAddress
+      : `0x${walletAddress}`;
+
+    if (!isValidStarknetAddress(normalizedAddress)) {
+      throw new BadRequestException('Invalid Starknet wallet address');
+    }
+
+    const existingUser = await this.usersRepository.findOne({
+      where: { walletAddress: normalizedAddress },
+    });
+    if (existingUser && existingUser.id !== Number(userId)) {
+      throw new BadRequestException(
+        'Wallet address is already connected to another account',
+      );
+    }
+
+    const user = await this.usersRepository.findOne({
+      where: { id: Number(userId) },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.walletAddress = normalizedAddress;
+    return this.usersRepository.save(user);
   }
 }

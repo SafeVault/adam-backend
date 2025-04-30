@@ -1,4 +1,10 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsNotEmpty,
+  Matches,
+} from 'class-validator';
 
 export class CreateEmployeeDto {
   @IsEmail()
@@ -9,5 +15,14 @@ export class CreateEmployeeDto {
 
   @IsOptional()
   @IsString()
-  wallet?: string;
+  walletAddress?: string;
+}
+
+export class ConnectWalletDto {
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^(0x)?[a-fA-F0-9]{64}$/, {
+    message: 'Invalid Starknet wallet address format',
+  })
+  walletAddress!: string;
 }
