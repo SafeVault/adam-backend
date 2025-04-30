@@ -14,8 +14,8 @@ import { PayrollEmployeeDetail } from './payroll/payroll-employee.entity';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'postgres13240!',
-      database: 'adam_backend_db',
+      password: '',
+      database: 'sv-adam-db',
       entities: [User, Payroll, PayrollEmployeeDetail],
       synchronize: true, // set to false in production
     }),
