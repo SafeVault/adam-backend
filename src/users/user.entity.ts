@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn } from 'typeorm';
+import { PayrollEmployeeDetail } from '../payroll/payroll-employee.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -24,4 +25,10 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYEE })
   role: 'admin' | 'employee';
+
+  @OneToMany(() => PayrollEmployeeDetail, (detail) => detail.employee)
+  payrollDetails: PayrollEmployeeDetail[];
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

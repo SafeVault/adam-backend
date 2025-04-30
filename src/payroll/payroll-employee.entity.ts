@@ -7,20 +7,20 @@ export class PayrollEmployeeDetail {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Payroll, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Payroll, (payroll) => payroll.details, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'payroll_id' })
   payroll: Payroll;
+
+  @ManyToOne(() => User, (user) => user.payrollDetails, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'employee_id' })
+  employee: User;
+
+  @Column('decimal', { precision: 10, scale: 2 })
+  amount: number;
 
   @Column()
   payroll_id: number;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'employee_id' })
-  employee: User;
-
   @Column()
   employee_id: number;
-
-  @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
 }

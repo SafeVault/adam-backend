@@ -6,11 +6,11 @@ import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    UsersModule,
-    PassportModule,
+    UsersModule, // Provides user-related services
+    PassportModule, // Enables Passport.js for authentication
     JwtModule.register({
-      secret: 'secret',
-      signOptions: { expiresIn: '1h' },
+      secret: 'secret', // Replace with a secure secret in production
+      signOptions: { expiresIn: '1h' }, // Token expiration time
     }),
   ],
   providers: [JwtStrategy],

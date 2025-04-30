@@ -15,7 +15,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { email } });
@@ -59,6 +59,31 @@ export class UsersService {
       role: UserRole.EMPLOYEE,
     });
     return this.usersRepository.save(employee);
+  }
+
+  async create(dto: Partial<User>): Promise<User> {
+    // Check if the user already exists
+    if (!dto.email) {
+      throw new BadRequestException('Email is required');
+    }
+    const existingUser = await this.findByEmail(dto.email);
+    if (existingUser) {
+      throw new BadRequestException('User already exists');
+    }
+
+    // Hash the password
+    if (!dto.password) {
+      throw new BadRequestException('Password is required');
+    }
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    // Create the user
+    const user = this.usersRepository.create({
+      ...dto,
+      password: hashedPassword,
+    });
+
+    return this.usersRepository.save(user);
   }
 
   async connectWallet(userId: string, walletAddress: string): Promise<User> {
