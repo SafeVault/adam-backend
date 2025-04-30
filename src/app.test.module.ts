@@ -9,18 +9,15 @@ import { Transaction } from './transactions/transactions.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '',
-      database: 'sv-adam-db',
+      type: 'sqlite',
+      database: ':memory:',
       entities: [User, Transaction],
-      synchronize: true, // set to false in production
+      synchronize: true,
+      dropSchema: true,
     }),
     AuthModule,
     UsersModule,
     TransactionsModule,
   ],
 })
-export class AppModule {}
+export class AppTestModule {} 
