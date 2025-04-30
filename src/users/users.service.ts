@@ -86,6 +86,13 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
+  async updatePassword(userId: number, hashedPassword: string): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+  }
+
   async connectWallet(userId: string, walletAddress: string): Promise<User> {
     const normalizedAddress = walletAddress.startsWith('0x')
       ? walletAddress
@@ -110,6 +117,8 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+
 
     user.walletAddress = normalizedAddress;
     return this.usersRepository.save(user);
