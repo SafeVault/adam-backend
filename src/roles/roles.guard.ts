@@ -1,7 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable,  UnauthorizedException,
+  ForbiddenException,} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole } from '../users/user.entity';
 import { ROLES_KEY } from './roles.decorator';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -13,6 +16,8 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
     if (!requiredRoles) return true;
+
+    if (!token) throw new UnauthorizedException('Token missing');
 
     const { user } = context.switchToHttp().getRequest();
     return requiredRoles.includes(user?.role);
