@@ -18,4 +18,10 @@ export class PayrollsController {
   async createPayroll(@Body() dto: CreatePayrollDto): Promise<Payroll> {
     return this.payrollsService.createPayroll(dto);
   }
+
+  @Get()
+  @Roles(UserRole.ADMIN)
+  async fetchUpcomingPayrolls() {
+    return await this.payrollsService.fetchUpcomingPayrolls();
+  }
 }

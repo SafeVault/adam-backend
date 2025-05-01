@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Payroll, PayrollStatus } from './payroll.entity';
 import { PayrollEmployeeDetail } from './payroll-employee.entity';
 import { CreatePayrollDto } from './payroll.dto';
@@ -64,5 +64,18 @@ export class PayrollsService {
     }
     
     return details;
+  }
+
+  async fetchUpcomingPayrolls(): Promise<Payroll[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+
+    return await this.payrollRepository.find({
+      where: { createdAt: MoreThan(today) },
+      relations: ['details', 'details.employee'], // Include both details and employee info
+      order: {
+        createdAt: 'ASC', // Optional: order by soonest first
+      },
+    });
   }
 }
